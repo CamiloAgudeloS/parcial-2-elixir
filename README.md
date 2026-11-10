@@ -88,6 +88,8 @@ Durante el desarrollo del parcial utilizamos **ChatGPT** como apoyo para analiza
 
 En el Punto 1, uno de sus principales aportes fue ayudarnos a comprobar cada módulo por separado antes de integrarlo. Realizamos pruebas sobre las validaciones, la lectura de archivos, la recursividad del reporte y la coordinación de procesos.
 
+Durante el punto 2, la IA cumplió la función de asesoramiento en el caso de que aparecieran errores desconocidos o malos funcionamientos durante el proceso. Así mismo, tambien ayudó a entender en mayor profundidad algunos de los conceptos así como tambien su aplicación dentro del proyecto y en su desarrollo.
+
 Posteriormente, verificamos el funcionamiento completo, incluyendo la actualización de los datos, la conservación del reporte anterior ante errores de lectura y el manejo de errores de escritura.
 
 La IA proponía soluciones y pruebas, mientras que nosotros las ejecutábamos, revisábamos los resultados y comprobábamos su cumplimiento frente al enunciado.
@@ -100,6 +102,8 @@ La IA tuvo mayor participación en algunas partes que consideramos complejas:
 - **Recursividad:** ayudó a estructurar el recorrido que calcula la cantidad de movimientos, identifica la magnitud máxima y acumula las profundidades.
 - **Coordinación:** apoyó la organización de la recepción recursiva de los resultados de los trabajadores, sin depender de su orden de llegada.
 - **Rutas y persistencia:** ayudó a implementar `Path.join/2`, `File.read/1` y `File.write/2`, junto con el manejo de errores.
+
+- **nodo servidor:**  ayudó con el bucle recursivo de espera, atención de `{:reporte_ciudad, id}`, `:reporte_general` y `:fin`, y reutilización del Coordinador del Punto 1 para leer los archivos de forma concurrente.
 
 Recurrimos a este apoyo porque estas partes requerían integrar varios conceptos y contemplar situaciones que inicialmente no teníamos completamente claras.
 
