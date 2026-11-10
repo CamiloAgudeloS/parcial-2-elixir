@@ -1,17 +1,23 @@
 # Parcial II – Programación III
 
-**Universidad del Quindío** · Ingeniería de Sistemas y Computación  
-**Autores:** Juan Camilo Agudelo·Jeronimo Delgado
+**Universidad del Quindío**  
+**Programa:** Ingeniería de Sistemas y Computación
+
+**Autores:**
+- Juan Camilo Agudelo
+- Jerónimo Delgado
 
 ## Descripción
 
-Solución en **Elixir** del Parcial II: generación local de reportes sísmicos y consulta de reportes entre nodos. Se utilizan structs, validaciones, recursividad, lectura de archivos y comunicación entre procesos mediante `spawn`, `send` y `receive`.
+Solución en **Elixir** del Parcial II, que comprende la generación local de reportes sísmicos y la consulta de reportes entre nodos.
 
-## Organización
+Se utilizan structs, validaciones, recursividad, lectura y escritura de archivos, y comunicación entre procesos mediante `spawn`, `send` y `receive`.
 
-- `punto-1/`: módulos del reporte local y carpeta `resources/`.
-- `punto-2/nodo-servidor/`: servicio que procesa consultas y sus propios archivos en `resources/`.
-- `punto-2/nodo-cliente/`: cliente que solicita y muestra reportes.
+## Organización del proyecto
+
+- `punto-1/`: módulos para generar el reporte local y carpeta `resources/`.
+- `punto-2/nodo-servidor/`: servicio que procesa las consultas reutilizando los módulos del Punto 1 y sus propios archivos de datos.
+- `punto-2/nodo-cliente/`: cliente encargado de solicitar y mostrar los reportes.
 
 ## Punto 1 – Reporte local
 
@@ -22,67 +28,96 @@ cd punto-1
 elixir main.exs
 ```
 
-**Entradas:** `punto-1/resources/ciudades.txt` y `punto-1/resources/movimientos.txt`. Cada línea contiene campos separados por `@` y no hay encabezados.
+**Archivos de entrada:**
+- `punto-1/resources/ciudades.txt`
+- `punto-1/resources/movimientos.txt`
 
-**Salida:** el reporte se muestra en consola y se genera automáticamente en `punto-1/resources/reporte_sismos.txt`. Se reemplaza en cada ejecución exitosa; si falla la lectura de una entrada, se conserva el reporte anterior.
+Los registros están separados por `@` y no contienen encabezados.
 
-El reporte incluye todas las ciudades válidas, detalles de sus movimientos, cantidad, magnitud máxima, profundidad promedio y registros rechazados por archivo. Los datos incluidos son **simulados para probar la aplicación**.
+**Archivo de salida:**
+
+`punto-1/resources/reporte_sismos.txt`
+
+El reporte se muestra en consola y se genera automáticamente en el archivo indicado. Cada ejecución exitosa actualiza su contenido; si falla la lectura de alguno de los archivos, se conserva el reporte anterior.
+
+Se incluyen todas las ciudades válidas, los detalles de sus movimientos, las estadísticas de magnitud y profundidad, y los registros rechazados por archivo.
+
+Los datos utilizados son **simulados con fines académicos y de prueba**.
 
 ## Punto 2 – Consulta entre nodos
 
-Se requieren **dos terminales** y la misma cookie de Erlang. Los siguientes comandos son los previstos para los nombres de nodo `servidor` y `cliente` y deben comprobarse al integrar el código del Punto 2.
+Para ejecutar el Punto 2 se necesitan **dos terminales**, utilizando la misma cookie de Erlang. Los siguientes comandos están preparados para ejecutar ambos nodos en el mismo computador.
 
-**Terminal 1 — servidor (desde la raíz del repositorio):**
+**Terminal 1 – Servidor (desde la raíz del repositorio):**
 
 ```bash
 cd punto-2/nodo-servidor
 elixir --sname servidor --cookie sismos_p2 nodo_servidor.exs
 ```
 
-**Terminal 2 — cliente (desde la raíz del repositorio):**
+**Terminal 2 – Cliente (desde la raíz del repositorio):**
 
 ```bash
 cd punto-2/nodo-cliente
 elixir --sname cliente --cookie sismos_p2 nodo_cliente.exs
 ```
 
-El cliente debe conectar mediante `Node.connect/1` con el **nombre completo real del nodo servidor** (`servidor@nombre_equipo`), registrar `:servicio_respuesta` y enviar las consultas a `:servicio_sismos`. Los nombres de nodo y la cookie deben coincidir con la implementación final.
+El servidor registra el proceso `:servicio_sismos` y el cliente registra `:servicio_respuesta`. La conexión se establece mediante `Node.connect/1`, utilizando los nombres de los nodos y la misma cookie.
 
-**Casos de verificación:** `C01` (con movimientos), `C03` (sin movimientos) y `C99` (inexistente). Después se solicita el reporte general y se envía `:fin`. Para comprobar que el servidor sigue atendiendo, **ejecutar de nuevo el comando del cliente sin reiniciar el servidor**. El servidor utiliza sus archivos en `punto-2/nodo-servidor/resources/`.
+El cliente identifica automáticamente el nodo `servidor@nombre_equipo` cuando ambos programas se ejecutan en el mismo computador.
+
+### Casos de verificación
+
+- `C01`: ciudad con movimientos registrados.
+- `C03`: ciudad sin movimientos registrados.
+- `C99`: ciudad inexistente.
+- `:reporte_general`: reporte de todas las ciudades.
+- `:fin`: confirmación de finalización del cliente.
+
+Para comprobar que el servidor continúa atendiendo solicitudes, se debe **ejecutar nuevamente el comando del cliente sin reiniciar el servidor**.
+
+El servidor utiliza los archivos de `punto-2/nodo-servidor/resources/` y reutiliza los módulos del Punto 1.
+
+Una vez terminadas las pruebas, el servidor puede detenerse manualmente desde su terminal.
 
 ## Reflexión sobre el uso de inteligencia artificial
 
-1. **Herramientas utilizadas**
+### 1. Herramientas utilizadas
 
-Durante el desarrollo del parcial utilizamos ChatGPT como apoyo para analizar el enunciado, organizar los módulos, implementar algunas partes del código y diseñar pruebas de funcionamiento.
+Durante el desarrollo del parcial utilizamos **ChatGPT** como apoyo para analizar el enunciado, organizar los módulos, implementar algunas partes del código y diseñar pruebas de funcionamiento.
 
-En el Punto 1, uno de sus principales aportes fue ayudarnos a verificar cada módulo por separado antes de integrarlo al programa. Realizamos pruebas para comprobar la validación de ciudades y movimientos, la lectura de archivos, los cálculos del reporte y la comunicación entre procesos.
+En el Punto 1, uno de sus principales aportes fue ayudarnos a comprobar cada módulo por separado antes de integrarlo. Realizamos pruebas sobre las validaciones, la lectura de archivos, la recursividad del reporte y la coordinación de procesos.
 
-Posteriormente, comprobamos el funcionamiento completo del programa, incluyendo la conservación del reporte anterior ante errores de lectura, la actualización de los datos y el manejo de errores de escritura.
+Posteriormente, verificamos el funcionamiento completo, incluyendo la actualización de los datos, la conservación del reporte anterior ante errores de lectura y el manejo de errores de escritura.
 
-La IA proponía el código y los casos de prueba, mientras que nosotros los ejecutábamos en nuestro entorno, revisábamos los resultados y comprobábamos que cumplieran con lo solicitado en el enunciado.
+La IA proponía soluciones y pruebas, mientras que nosotros las ejecutábamos, revisábamos los resultados y comprobábamos su cumplimiento frente al enunciado.
 
-2. **Partes del problema desarrolladas con apoyo de IA**
+### 2. Partes desarrolladas con IA
 
-La IA tuvo una participación importante en la implementación de las partes que consideramos más complejas:
 
-Recursividad del reporte: ayudó a estructurar una función que calcula la cantidad de movimientos, identifica la magnitud máxima y acumula las profundidades en un mismo recorrido.
+La IA tuvo mayor participación en algunas partes que consideramos complejas:
 
-Rutas y persistencia: ayudó a implementar la ubicación de los archivos con Path.join/2, la lectura con File.read/1 y el almacenamiento del reporte con File.write/2, incluyendo el manejo de errores.
+- **Recursividad:** ayudó a estructurar el recorrido que calcula la cantidad de movimientos, identifica la magnitud máxima y acumula las profundidades.
+- **Coordinación:** apoyó la organización de la recepción recursiva de los resultados de los trabajadores, sin depender de su orden de llegada.
+- **Rutas y persistencia:** ayudó a implementar `Path.join/2`, `File.read/1` y `File.write/2`, junto con el manejo de errores.
 
-3. **Idea complementaria**
+Recurrimos a este apoyo porque estas partes requerían integrar varios conceptos y contemplar situaciones que inicialmente no teníamos completamente claras.
 
-Una de las sugerencias de la IA que no habíamos trabajado directamente en clase fue utilizar Time.from_iso8601 para validar las horas de los movimientos sísmicos.
+### 3. Idea complementaria 
 
-Inicialmente conocíamos la necesidad de comprobar el formato HH:MM:SS, pero no una función específica para validar que los valores correspondieran a una hora real.
+Una sugerencia de la IA que no habíamos trabajado directamente en clase fue utilizar `Time.from_iso8601/1` para validar las horas de los movimientos sísmicos.
 
-La IA propuso esta alternativa y profundizamos en su funcionamiento mediante la documentación oficial de Elixir. También se utilizó Time.to_iso8601 para comprobar que las horas conservaran el formato solicitado.
+Aunque conocíamos el formato `HH:MM:SS`, no sabíamos cómo utilizar una función específica para comprobar que los valores correspondieran a una hora válida.
 
-4. **Conclusiones**
+La IA propuso esta implementación y profundizamos en su funcionamiento consultando la documentación oficial de Elixir. También utilizamos `Time.to_iso8601/1` para verificar que las horas conservaran el formato solicitado.
 
-Consideramos que uno de los temas que mejor comprendemos es el manejo de procesos concurrentes en Elixir, especialmente el uso de spawn, self, send y receive, la comunicación mediante mensajes y la importancia de no depender del orden en que terminan los procesos.
 
-Por esta razón decidimos utilizar estas herramientas en lugar de Task, ya que corresponden a los ejemplos trabajados en clase y nos permiten comprender directamente cómo se crean los procesos y cómo intercambian información.
+Esta experiencia nos permitió conocer funciones adicionales y comprender la importancia de consultar la documentación oficial cuando utilizamos herramientas nuevas.
 
-Por otra parte, todavía necesitamos reforzar algunos conceptos relacionados con la construcción de rutas mediante Path.join la lectura y escritura de archivos y el manejo de errores durante la persistencia. Aunque comprobamos su funcionamiento, son aspectos en los que dependimos más del apoyo de la IA.
+### 4. Conclusiones y aprendizajes
 
+Consideramos que uno de los temas que mejor comprendemos es el manejo de **procesos concurrentes en Elixir**, especialmente `spawn`, `self`, `send` y `receive`, la comunicación mediante mensajes y la importancia de no depender del orden en que terminan los procesos.
+
+Por esta razón decidimos utilizar estas herramientas en lugar de `Task`, ya que corresponden a los ejemplos trabajados en clase y nos permiten comprender directamente cómo se crean los procesos y cómo intercambian información.
+
+Por otra parte, todavía necesitamos reforzar conceptos relacionados con la construcción de rutas mediante `Path.join/2`, la lectura y escritura de archivos y el manejo de errores durante la persistencia. Aunque verificamos su funcionamiento, son aspectos en los que dependimos más del apoyo de la IA.

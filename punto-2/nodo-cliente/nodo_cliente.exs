@@ -12,7 +12,6 @@ defmodule NodoCliente do
   @ciudad_sin_movimientos "C03"
   @ciudad_inexistente "C99"
 
-  @tiempo_espera 10_000
 
   @doc """
   Registra el proceso de respuesta, se conecta al servidor,
@@ -78,21 +77,20 @@ defmodule NodoCliente do
   end
 
   # Recepcion recursiva: continua hasta recibir :fin.
-  defp recibir_respuestas(numero) do
-    receive do
-      :fin ->
-        IO.puts("Confirmacion :fin recibida. Cliente finalizado.")
 
-      respuesta ->
-        IO.puts("===== Respuesta #{numero} =====")
-        mostrar(respuesta)
-        IO.puts("")
-        recibir_respuestas(numero + 1)
-    after
-      @tiempo_espera ->
-        IO.puts("Tiempo de espera agotado sin recibir respuesta del servidor.")
-    end
+defp recibir_respuestas(numero) do
+  receive do
+    :fin ->
+      IO.puts("Confirmacion :fin recibida. Cliente finalizado.")
+
+    respuesta ->
+      IO.puts("===== Respuesta #{numero} =====")
+      mostrar(respuesta)
+      IO.puts("")
+      recibir_respuestas(numero + 1)
   end
+end
+
 
   defp mostrar(respuesta) when is_binary(respuesta), do: IO.puts(respuesta)
   defp mostrar(respuesta), do: IO.inspect(respuesta)
