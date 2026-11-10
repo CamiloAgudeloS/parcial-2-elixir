@@ -50,3 +50,39 @@ El cliente debe conectar mediante `Node.connect/1` con el **nombre completo real
 
 **Casos de verificación:** `C01` (con movimientos), `C03` (sin movimientos) y `C99` (inexistente). Después se solicita el reporte general y se envía `:fin`. Para comprobar que el servidor sigue atendiendo, **ejecutar de nuevo el comando del cliente sin reiniciar el servidor**. El servidor utiliza sus archivos en `punto-2/nodo-servidor/resources/`.
 
+## Reflexión sobre el uso de inteligencia artificial
+
+1. **Herramientas utilizadas**
+
+Durante el desarrollo del parcial utilizamos ChatGPT como apoyo para analizar el enunciado, organizar los módulos, implementar algunas partes del código y diseñar pruebas de funcionamiento.
+
+En el Punto 1, uno de sus principales aportes fue ayudarnos a verificar cada módulo por separado antes de integrarlo al programa. Realizamos pruebas para comprobar la validación de ciudades y movimientos, la lectura de archivos, los cálculos del reporte y la comunicación entre procesos.
+
+Posteriormente, comprobamos el funcionamiento completo del programa, incluyendo la conservación del reporte anterior ante errores de lectura, la actualización de los datos y el manejo de errores de escritura.
+
+La IA proponía el código y los casos de prueba, mientras que nosotros los ejecutábamos en nuestro entorno, revisábamos los resultados y comprobábamos que cumplieran con lo solicitado en el enunciado.
+
+2. **Partes del problema desarrolladas con apoyo de IA**
+
+La IA tuvo una participación importante en la implementación de las partes que consideramos más complejas:
+
+Recursividad del reporte: ayudó a estructurar una función que calcula la cantidad de movimientos, identifica la magnitud máxima y acumula las profundidades en un mismo recorrido.
+
+Rutas y persistencia: ayudó a implementar la ubicación de los archivos con Path.join/2, la lectura con File.read/1 y el almacenamiento del reporte con File.write/2, incluyendo el manejo de errores.
+
+3. **Idea complementaria**
+
+Una de las sugerencias de la IA que no habíamos trabajado directamente en clase fue utilizar Time.from_iso8601 para validar las horas de los movimientos sísmicos.
+
+Inicialmente conocíamos la necesidad de comprobar el formato HH:MM:SS, pero no una función específica para validar que los valores correspondieran a una hora real.
+
+La IA propuso esta alternativa y profundizamos en su funcionamiento mediante la documentación oficial de Elixir. También se utilizó Time.to_iso8601 para comprobar que las horas conservaran el formato solicitado.
+
+4. **Conclusiones**
+
+Consideramos que uno de los temas que mejor comprendemos es el manejo de procesos concurrentes en Elixir, especialmente el uso de spawn, self, send y receive, la comunicación mediante mensajes y la importancia de no depender del orden en que terminan los procesos.
+
+Por esta razón decidimos utilizar estas herramientas en lugar de Task, ya que corresponden a los ejemplos trabajados en clase y nos permiten comprender directamente cómo se crean los procesos y cómo intercambian información.
+
+Por otra parte, todavía necesitamos reforzar algunos conceptos relacionados con la construcción de rutas mediante Path.join la lectura y escritura de archivos y el manejo de errores durante la persistencia. Aunque comprobamos su funcionamiento, son aspectos en los que dependimos más del apoyo de la IA.
+
